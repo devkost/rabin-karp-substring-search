@@ -83,7 +83,24 @@ def search(
     if not string:
         return None
 
+    matches: list[tuple[int, int, str]] = []
+    for pattern_index, pattern in enumerate(sub_string):
+        positions = _find_one(string, pattern, case_sensitivity, "first", None)
+        matches.extend(
+            (position, pattern_index, pattern) for position in positions or ()
+        )
+
+    matches.sort(key=lambda match: (match[0], match[1]))
+    if method == "last":
+        matches.reverse()
+    if count is not None:
+        matches = matches[:count]
+
+    results: dict[str, list[int]] = {pattern: [] for pattern in sub_string}
+    for position, _, pattern in matches:
+        results[pattern].append(position)
+
     return {
-        pattern: _find_one(string, pattern, case_sensitivity, method, count)
-        for pattern in sub_string
+        pattern: tuple(positions) if positions else None
+        for pattern, positions in results.items()
     }
