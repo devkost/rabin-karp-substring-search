@@ -1,0 +1,6 @@
+input.txt
+test_search.py
+venv/
+.venv/
+__pycache__/
+*.py[cod]
